@@ -2,6 +2,7 @@ import threading
 import os.path
 import time
 import multiprocessing as mp
+import logging
 
 from SharedFile import SharedFile
 from message import message
@@ -12,6 +13,7 @@ class FileScanner:
     fileList = {} # current file list
     file_process = None # thread
     queue = None # message queue
+    logger = logging.getLogger("FileScanner")
 
 
     def __init__(self, fileList, queue, dir="./"):
@@ -35,6 +37,7 @@ class FileScanner:
         main method. Compare the file list with new on and generate the updated file list
         :type queue: message queue
         """
+        self.logger.info("initialized")
         while True:
             newFileList = {}
             fileList = self.fileList
@@ -45,6 +48,7 @@ class FileScanner:
                 elif fileList[i].mtime != temp[i].mtime or fileList[i].size != temp[i].size:
                     newFileList[i] = temp[i]
             if len(newFileList) != 0:
+                self.logger.info(str(len(newFileList)) + "file update detected, start pushing")
                 self.push(newFileList, queue)
                 fileList.clear()
                 self.fileList.update(temp)
