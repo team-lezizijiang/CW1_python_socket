@@ -12,3 +12,6 @@ class SharedFile(object):
 
     def __hash__(self):
         return hash(self.filename)
+
+    def __str__(self):
+        return self.filename + " " + str(self.mtime) + " " + str(self.size)

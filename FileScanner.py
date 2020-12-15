@@ -78,6 +78,6 @@ class FileScanner:
 if __name__ == "__main__":
     s = {}
     dir = r"./"
-    filescanner = FileScanner(s, dir=dir)
+    filescanner = FileScanner(s, dir=dir, queue=mp.Queue())
     while True:
         time.sleep(20)

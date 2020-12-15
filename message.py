@@ -9,3 +9,6 @@ class message:
     def __init__(self, message_type, message):
         self.message_type = message_type
         self.message = message
+
+    def __str__(self):
+        return str(self.message_type) + str(message)
