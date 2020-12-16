@@ -37,8 +37,11 @@ class TcpListener:
     def hello(self, peers):
         for peer in peers.keys():
             conn = socket.socket()
-            conn.connect((peer, self.port), )
-            conn.send(tcpMessage(tcpMessage.WAKE, self.filelist, 0).toJson())
+            try:
+                conn.connect((peer, self.port), )
+                conn.send(tcpMessage(tcpMessage.WAKE, self.filelist, 0).toJson())
+            except:
+                pass
 
     def update(self):
         while True:
