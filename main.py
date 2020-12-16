@@ -18,7 +18,7 @@ def print_hi(name):
 if __name__ == '__main__':
     filelist = mp.Manager().dict()
     peers = mp.Manager().dict()
-    for arg in sys.argv:
+    for arg in sys.argv[1::]:
         peers[arg] = {}
     queue = mp.Manager().Queue()
     file_scanner = FileScanner.FileScanner(filelist, queue, "./template")

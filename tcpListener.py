@@ -21,15 +21,15 @@ class TcpListener:
     def __init__(self, host, port, peers, queue, filelist):
         self.socket = socket.socket()
         self.filelist = filelist
-        self.socket.bind((host, port,))
+        self.socket.bind((socket.gethostname(), port,))
         self.host = host
         self.port = port
         self.peers = peers
         self.queue = queue
-        self.hello(peers)
         self.listener = Thread(target=self.listen)
         self.listener.setDaemon(True)
         self.listener.start()
+        self.hello(self.peers)
 
     def push(self, message_type, message1):
         self.queue.push(message(message_type, message1))
@@ -40,7 +40,7 @@ class TcpListener:
             try:
                 conn.connect((peer, self.port), )
                 conn.send(tcpMessage(tcpMessage.WAKE, self.filelist, 0).toJson())
-            except:
+            except Exception as e:
                 pass
 
     def update(self):
