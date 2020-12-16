@@ -2,7 +2,12 @@
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
+import multiprocessing as mp
+import fileDownloader
+import FileScanner
+import tcpListener
+import time
+import sys
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
@@ -11,6 +16,15 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    filelist = mp.Manager().dict()
+    peers = mp.Manager().dict()
+    for arg in sys.argv:
+        peers[arg] = {}
+    queue = mp.Manager().Queue()
+    file_scanner = FileScanner.FileScanner(filelist, queue, "./template")
+    file_downloader = fileDownloader.FileDownloader(queue, filelist, peers, 24685)
+    tcp_listener = tcpListener.TcpListener("127.0.0.1", 24887, peers, queue, filelist)
+    while True:
+        time.sleep(1)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

@@ -2,6 +2,7 @@ class SharedFile(object):
     mtime = ""
     size = ""
     filename = ""
+
     def __init__(self, filename, mtime, size):
         self.filename = filename
         self.mtime = mtime
@@ -12,6 +13,3 @@ class SharedFile(object):
 
     def __hash__(self):
         return hash(self.filename)
-
-    def __str__(self):
-        return self.filename + " " + str(self.mtime) + " " + str(self.size)
