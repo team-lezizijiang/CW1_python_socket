@@ -8,7 +8,7 @@ from os.path import isfile, join, getmtime, getsize
 
 class Client:
     def __init__(self, host, port):
-        self.host = host  # server ip
+        self.host = host  # server ipsd
         self.port = port  # server port
         self.sockeClient = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # client socket
         self.filesTobeReq = []

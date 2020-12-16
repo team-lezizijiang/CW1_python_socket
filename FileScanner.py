@@ -69,6 +69,7 @@ class FileScanner:
         :param new_file_list: list contains new files
         :param queue: message queue
         """
+        print("file updated" + str(new_file_list))
         queue.put(message(message.NEW_FILE, new_file_list))
 
 

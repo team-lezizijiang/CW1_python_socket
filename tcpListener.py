@@ -28,6 +28,7 @@ class TcpListener:
         self.peers = peers
         self.queue = queue
         self.listener = Thread(target=self.listen)
+        self.updater = Thread(target=self.update)
         self.listener.setDaemon(True)
         self.listener.start()
         self.hello(self.peers)
@@ -82,7 +83,7 @@ class TcpListener:
         conn.close()
 
     def handle(self, conn):
-        conn.setblocking(False)
+        conn.setblocking(True)
         headerlength = conn.recv(4)
         # print("4 bytes received ...")
         headerlength = struct.unpack("I", headerlength)
@@ -92,9 +93,9 @@ class TcpListener:
         print(header)
         if header["message_type"] == tcpMessage.NEW_TICKET:  # new ticket with new file to be sync
             header['message']['peer'] = conn.getperrnamne()[0]
-            self.queue.push(message(message_type=message.NEW_TICKET, message=json.loads(header['message'])))
+            self.queue.push(message(message_type=message.NEW_TICKET, message=header['message']))
         elif header["message_type"] == tcpMessage.WAKE:  # peers update the fileList
-            self.peers[str(conn.getpeername()[0])] = json.loads(header['message'])
+            self.peers[str(conn.getpeername()[0])] = header['message']
         elif header["message_type"] == tcpMessage.DOWNLOAD:  # accept request and send block back
             self.sendFile(header["message"], conn.getpeername()[0])
         elif header["message_type"] == tcpMessage.BLOCK_MESSAGE:  # accept the block data and send it to downloader
