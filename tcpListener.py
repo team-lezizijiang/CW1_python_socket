@@ -40,7 +40,7 @@ class TcpListener:
             conn = socket.socket()
             try:
                 conn.connect((peer, self.port), )
-                conn.send(tcpMessage(tcpMessage.WAKE, self.filelist, 0).toJson())
+                conn.send(tcpMessage(tcpMessage.WAKE, dict(self.filelist), 0).toJson())
                 conn.close()
             except Exception as e:
                 print(e)

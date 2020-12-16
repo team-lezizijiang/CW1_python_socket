@@ -42,4 +42,4 @@ class Ticket:
         }
 
     def toJson(self):
-        return json.dumps(self.__dict__(), default=lambda x: x.__dict__)
+        return json.dumps(self.__dict__())
