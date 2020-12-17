@@ -20,7 +20,7 @@ class tcpMessage:
         jsons = json.dumps({'message_type': self.message_type,
                             'index': self.index,
                             'message': self.message
-        }, default=lambda x: x.__dict__ if self.message_type != 1 else base64.b64encode(x))
+        }, default=lambda x: x.__dict__ if self.message_type != 1 else base64.b64encode(x["message"]))
         return struct.pack("I", len(jsons)) + jsons.encode("utf-8")
 
 if __name__ == "__main__":
