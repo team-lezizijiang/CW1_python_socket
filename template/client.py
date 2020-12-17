@@ -53,7 +53,6 @@ class Client:
                 requestFileDownloadThred = threading.Thread(target=self.requestFileDownload,args=(file,))
                 requestFileDownloadThred.start()
 
-
     def requestFileInformation(self,file):
         print(f"[CLIENT-REQUEST]:exits in current share folder, looking for more information from sever ...")
         headerBuilder = Message(operationCode=0, filename=file)

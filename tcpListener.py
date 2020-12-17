@@ -95,7 +95,7 @@ class TcpListener:
         header = json.loads(jsonfile)  # load json file to dict
         print(header)
         if header["message_type"] == tcpMessage.NEW_TICKET:  # new ticket with new file to be sync
-            header['message']['peer'] = conn.getperrnamne()[0]
+            header['message']['peer'] = conn.getpeernamne()[0]
             self.ticketQueue.put(message(message_type=message.NEW_TICKET, message=header['message']))
         elif header["message_type"] == tcpMessage.WAKE:  # peers update the fileList
             self.peers[str(conn.getpeername()[0])] = header['message']
