@@ -12,7 +12,7 @@ class Ticket:
         self.sharedFile = file
         self.blockSize = size
         self.peer = peer
-        file_size = file.size
+        file_size = file['size']
         while file_size > 0:
             file_size -= size
             self.blockNumber += 1
@@ -29,11 +29,11 @@ class Ticket:
             return -1
 
     def __eq__(self, other):
-        return self.sharedFile.mtime == other.sharedFile.mtime and self.sharedFile.size == other.sharedFile.size
+        return self['sharedFile']['mtime'] == other['sharedFile']['mtime'] and self['sharedFile']['size'] == other['sharedFile']['size']
 
     def __dict__(self):
         return {
-            "sharedFile": self.sharedFile.__dict__,
+            "sharedFile": self.sharedFile,
             "blockSize": self.blockSize,
             "blockNumber": self.blockNumber,
             "lastBlockSize": self.lastBlockSize,
