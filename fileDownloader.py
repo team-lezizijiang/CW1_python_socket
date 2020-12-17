@@ -43,7 +43,7 @@ class FileDownloader:
     def download_file(self, new_ticket):
         conn = socket.socket()
         conn.connect((new_ticket.peer, self.port), )
-        filename = new_ticket.sharedFile["filename"]
+        filename = os.path.normpath(new_ticket.sharedFile["filename"])
         if os.path.isfile(filename):
             os.remove(filename)
         os.mknod(filename+".lefting")
