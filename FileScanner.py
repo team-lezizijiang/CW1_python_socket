@@ -44,6 +44,9 @@ class FileScanner:
                     newFileList[i] = temp[i]
             if len(newFileList) != 0:
                 self.push(newFileList, queue)
+                tempMessage = queue.get()
+                print(tempMessage)
+                queue.put(tempMessage)
                 fileList.clear()
                 self.fileList.update(temp)
             time.sleep(1)
@@ -76,8 +79,9 @@ class FileScanner:
 
 if __name__ == "__main__":
     s = {}
-    dir = r"./"
-    filescanner = FileScanner(s, dir=dir)
+    dir = "./template"
+    filescanner = FileScanner(s, None, dir=dir)
     while True:
+        print(s)
         time.sleep(20)
 

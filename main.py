@@ -18,15 +18,16 @@ def print_hi(name):
 if __name__ == '__main__':
     filelist = mp.Manager().dict()
     peers = mp.Manager().dict()
-    for arg in sys.argv[1::]:
+    for arg in sys.argv[2::]:
         peers[arg] = {}
     ticketQueue = mp.Manager().Queue()
     fileQueue = mp.Manager().Queue()
     blockQueue = mp.Manager().Queue()
-    file_scanner = FileScanner.FileScanner(filelist, fileQueue, "./template")
+    file_scanner = FileScanner.FileScanner(filelist, fileQueue, ".\\template")
     file_downloader = fileDownloader.FileDownloader(ticketQueue, blockQueue, filelist, peers, 24685)
     tcp_listener = tcpListener.TcpListener("127.0.0.1", 24475, peers, fileQueue, ticketQueue, blockQueue, filelist)
     while True:
         time.sleep(1)
+
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
