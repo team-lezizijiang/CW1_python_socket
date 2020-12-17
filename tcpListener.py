@@ -2,6 +2,7 @@ import json
 import socket
 import hashlib
 import struct
+import os.path
 import time
 from multiprocessing import queues
 from threading import Thread
@@ -79,7 +80,7 @@ class TcpListener:
         conn.connect((peer, self.port), )
         with open(filename, 'br') as fp:
             fp.seek(i * 4096)
-            conn.send(tcpMessage(tcpMessage.BLOCK_MESSAGE, fp.read(4096), i).toJson())
+            conn.send(tcpMessage(tcpMessage.BLOCK_MESSAGE, fp.read(max(4096, os.path.getsize(filename)) - i * 4096), i).toJson())
         conn.close()
 
     def handle(self, conn):

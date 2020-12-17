@@ -68,7 +68,7 @@ class FileDownloader:
                         sleep(0.1)
                     new_ticket.update(i)
                     i = new_ticket.find_first_untraverse_block()
-                with open("ticketStorage.txt", 'rw') as f2:
+                with open("ticketStorage.txt", 'w+') as f2:
                     file_list = f2.readlines()
                     file_list.remove(filename+'\n')
                     f2.writelines(file_list)
