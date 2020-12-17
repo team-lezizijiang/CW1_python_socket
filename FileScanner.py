@@ -58,9 +58,10 @@ class FileScanner:
         g = os.walk(dir)
         for path, dir_list, file_list in g:
             for file_name in file_list:
+                if file_name.endswith(".lefting"):
+                    continue
                 abs_name = os.path.join(path, file_name)
                 tempList[abs_name] = SharedFile(abs_name, os.path.getmtime(abs_name), os.path.getsize(abs_name))
-
         return tempList
 
     def push(self, new_file_list, queue):

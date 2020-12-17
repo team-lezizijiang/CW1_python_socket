@@ -20,10 +20,12 @@ if __name__ == '__main__':
     peers = mp.Manager().dict()
     for arg in sys.argv[1::]:
         peers[arg] = {}
-    queue = mp.Manager().Queue()
-    file_scanner = FileScanner.FileScanner(filelist, queue, "./template")
-    file_downloader = fileDownloader.FileDownloader(queue, filelist, peers, 24685)
-    tcp_listener = tcpListener.TcpListener("127.0.0.1", 24475, peers, queue, filelist)
+    ticketQueue = mp.Manager().Queue()
+    fileQueue = mp.Manager().Queue()
+    blockQueue = mp.Manager().Queue()
+    file_scanner = FileScanner.FileScanner(filelist, fileQueue, "./template")
+    file_downloader = fileDownloader.FileDownloader(ticketQueue, blockQueue, filelist, peers, 24685)
+    tcp_listener = tcpListener.TcpListener("127.0.0.1", 24475, peers, fileQueue, ticketQueue, blockQueue, filelist)
     while True:
         time.sleep(1)
 

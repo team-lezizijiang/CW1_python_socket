@@ -35,7 +35,7 @@ class FileDownloader:
                 if not os.path.isfile("ticketStorage.txt"):
                     os.mknod('ticketStorage.txt')
                 with open("ticketStorage.txt", 'a+') as f:
-                    f.writelines(new_ticket.sharedFile.filename + '\n')
+                    f.write(new_ticket.sharedFile.filename + '\n')
             sleep(1)
 
     def download_file(self, ticket):
@@ -62,7 +62,8 @@ class FileDownloader:
                     sleep(0.1)
                 ticket.update(i)
                 i = ticket.find_first_untraverse_block()
-            with open("ticketStorage.txt", 'a') as f2:
+            with open("ticketStorage.txt", 'rw') as f2:
                 file_list = f2.readlines()
                 file_list.remove(filename+'\n')
-        os.rename(ticket.sharedFile.filename+".lefting", filename)
+                f2.writelines(file_list)
+        os.rename(filename+".lefting", filename)
