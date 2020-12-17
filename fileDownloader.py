@@ -35,10 +35,10 @@ class FileDownloader:
             new_ticket = ticket.Ticket(temp_message.message['sharedFile'], temp_message.message['blockSize'],
                                        temp_message.message['peer'])
             print('new new_ticket received')
-            if not os.path.isfile("ticketStorage.txt"):
-                os.mknod('ticketStorage.txt')
-            with open("ticketStorage.txt", 'a+') as f:
-                f.write(str(new_ticket) + '\n')
+            # if not os.path.isfile("ticketStorage.txt"):
+            #     os.mknod('ticketStorage.txt')
+            # with open("ticketStorage.txt", 'a+') as f:
+            #     f.write(str(new_ticket) + '\n')
             self.ticketList.append(new_ticket)
             self.download_file(new_ticket)
             sleep(1)
@@ -69,10 +69,10 @@ class FileDownloader:
                         sleep(0.1)
                     new_ticket.update(i)
                     i = new_ticket.find_first_untraverse_block()
-                with open("ticketStorage.txt", 'w+') as f2:
-                    file_list = f2.readlines()
-                    file_list.remove(str(new_ticket) + '\n')
-                    f2.writelines(file_list)
+                # with open("ticketStorage.txt", 'w+') as f2:
+                #     file_list = f2.readlines()
+                #     file_list.remove(str(new_ticket) + '\n')
+                #     f2.writelines(file_list)
         os.rename(filename + ".lefting", filename)
         self.ticketList.remove(new_ticket)
         self.existFileList[filename] = SharedFile(filename, os.path.getmtime(filename), os.path.getsize(filename))
