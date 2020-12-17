@@ -35,7 +35,7 @@ class FileDownloader:
             new_ticket = ticket.Ticket(temp_message.message['sharedFile'], temp_message.message['blockSize'],
                                        temp_message.message['peer'])
             print('new new_ticket received')
-            if new_ticket.sharedFile['filename'] not in self.existFileList.keys():
+            if new_ticket.sharedFile['filename'] not in self.existFileList.keys() or new_ticket.sharedFile['filename'] != self.existFileList['filename']:
                 if not os.path.isfile("ticketStorage.txt"):
                     os.mknod('ticketStorage.txt')
                 with open("ticketStorage.txt", 'a+') as f:
