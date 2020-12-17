@@ -7,6 +7,7 @@ import fileDownloader
 import FileScanner
 import tcpListener
 import time
+import os.path
 import sys
 
 def print_hi(name):
@@ -23,7 +24,7 @@ if __name__ == '__main__':
     ticketQueue = mp.Manager().Queue()
     fileQueue = mp.Manager().Queue()
     blockQueue = mp.Manager().Queue()
-    file_scanner = FileScanner.FileScanner(filelist, fileQueue, ".\\template")
+    file_scanner = FileScanner.FileScanner(filelist, fileQueue, os.path.normpath(".\\template"))
     file_downloader = fileDownloader.FileDownloader(ticketQueue, blockQueue, filelist, peers, 24685)
     tcp_listener = tcpListener.TcpListener("127.0.0.1", 24475, peers, fileQueue, ticketQueue, blockQueue, filelist)
     while True:
