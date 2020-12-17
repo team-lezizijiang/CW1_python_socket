@@ -31,6 +31,8 @@ class TcpListener:
         self.listener = Thread(target=self.listen)
         self.updater = Thread(target=self.update)
         self.listener.setDaemon(True)
+        self.updater.setDaemon(True)
+        self.updater.start()
         self.listener.start()
         self.hello(self.peers)
 
@@ -50,7 +52,7 @@ class TcpListener:
 
     def update(self):
         while True:
-            if self.fileQueue.empty():
+            if self.fileQueue.qsize() == 0:
                 continue
             message = self.fileQueue.get()
             if message != None:
