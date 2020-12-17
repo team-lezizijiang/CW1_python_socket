@@ -31,7 +31,9 @@ class FileDownloader:
             if self.ticketQueue.qsize() == 0:
                 continue
             temp_message = self.ticketQueue.get()
-            new_ticket = ticket.Ticket(temp_message.message['sharedFile'], temp_message.message['blockSize'], temp_message.message['peer'])
+            temp_message.message['sharedFile']["filename"] = os.path.sep.join(temp_message.message['sharedFile']["filename"].split('\\'))
+            new_ticket = ticket.Ticket(temp_message.message['sharedFile'], temp_message.message['blockSize'],
+                                       temp_message.message['peer'])
             print('new new_ticket received')
             if new_ticket.sharedFile['filename'] not in self.existFileList.keys():
                 if not os.path.isfile("ticketStorage.txt"):
@@ -45,11 +47,11 @@ class FileDownloader:
     def download_file(self, new_ticket):
         conn = socket.socket()
         conn.connect((new_ticket.peer, self.port), )
-        filename = os.path.sep.join(new_ticket.sharedFile["filename"].split('\\'))
+        filename = new_ticket.sharedFile.filename
         if os.path.isfile(filename):
             os.remove(filename)
-        if not os.path.exists(filename+".lefting"):
-            open(filename+".lefting", 'w')
+        if not os.path.exists(filename + ".lefting"):
+            open(filename + ".lefting", 'w')
         if new_ticket.blockNumber != 0:
             with open(filename + ".lefting", "ab+") as f:
                 i = new_ticket.find_first_untraverse_block()
@@ -70,11 +72,10 @@ class FileDownloader:
                     i = new_ticket.find_first_untraverse_block()
                 with open("ticketStorage.txt", 'w+') as f2:
                     file_list = f2.readlines()
-                    file_list.remove(str(new_ticket) +'\n')
+                    file_list.remove(str(new_ticket) + '\n')
                     f2.writelines(file_list)
-        os.rename(filename+".lefting", filename)
+        os.rename(filename + ".lefting", filename)
         self.ticketList.remove(new_ticket)
         self.existFileList[filename] = SharedFile(filename, os.path.getmtime(filename), os.path.getsize(filename))
         conn.send(tcpMessage(tcpMessage.SUCCESS_ACCEPT, filename, 0).toJson())
         conn.close()
-
