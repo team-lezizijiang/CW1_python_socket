@@ -1,6 +1,7 @@
 import threading
 import os
 import socket
+import base64
 import ticket
 from time import sleep
 from SharedFile import SharedFile
@@ -59,7 +60,7 @@ class FileDownloader:
                         if self.blockQueue.empty():
                             continue
                         file_message = self.blockQueue.get()
-                        file_block = file_message.message[0]
+                        file_block = base64.b64decode(file_message.message[0])
                         index = file_message.message[1]
                         f.seek(index * new_ticket.blockSize)
                         f.write(file_block)
