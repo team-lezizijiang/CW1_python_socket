@@ -13,20 +13,21 @@ from ticket import Ticket
 
 class TcpListener:
     peers = dict()
-    queue = None
     host = ""
     port = ""
     filelist = {}
     listener = None
 
-    def __init__(self, host, port, peers, queue, filelist):
+    def __init__(self, host, port, peers, fileQueue, ticketQueue, blockQueue, filelist):
         self.socket = socket.socket()
         self.filelist = filelist
         self.socket.bind(('0.0.0.0', port,))
         self.host = host
         self.port = port
         self.peers = peers
-        self.queue = queue
+        self.fileQueue = fileQueue
+        self.ticketQueue = ticketQueue
+        self.blockQueue = blockQueue
         self.listener = Thread(target=self.listen)
         self.updater = Thread(target=self.update)
         self.listener.setDaemon(True)
@@ -49,7 +50,7 @@ class TcpListener:
 
     def update(self):
         while True:
-            message = self.queue.get()
+            message = self.fileQueue.get()
             if message != None:
                 if message.message_type == message.NEW_FILE:
                     new_file_list = message.message
@@ -59,8 +60,6 @@ class TcpListener:
                             conn.connect((peer, self.port,))
                             conn.send(
                                 (tcpMessage(tcpMessage.NEW_TICKET, Ticket(new_file_list[file], 4096, 0), 0)).toJson())
-                else:
-                    self.queue.push(message)
 
     def listen(self):
         self.socket.listen(5)
@@ -93,13 +92,13 @@ class TcpListener:
         print(header)
         if header["message_type"] == tcpMessage.NEW_TICKET:  # new ticket with new file to be sync
             header['message']['peer'] = conn.getperrnamne()[0]
-            self.queue.push(message(message_type=message.NEW_TICKET, message=header['message']))
+            self.ticketQueue.push(message(message_type=message.NEW_TICKET, message=header['message']))
         elif header["message_type"] == tcpMessage.WAKE:  # peers update the fileList
             self.peers[str(conn.getpeername()[0])] = header['message']
         elif header["message_type"] == tcpMessage.DOWNLOAD:  # accept request and send block back
             self.sendFile(header["message"], conn.getpeername()[0])
         elif header["message_type"] == tcpMessage.BLOCK_MESSAGE:  # accept the block data and send it to downloader
-            self.queue.push(message(message_type=message.FILE_BLOCK, message=(header["message"], header["index"])))
+            self.blockQueue.push(message(message_type=message.FILE_BLOCK, message=(header["message"], header["index"])))
         elif header["message_type"] == tcpMessage.SUCCESS_ACCEPT:  # peer received file, send back md5 to check it
             self.sendMD5(header["message"]['filename'], conn.getpeername()[0])
         conn.close()
