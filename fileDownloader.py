@@ -70,7 +70,7 @@ class FileDownloader:
                     i = new_ticket.find_first_untraverse_block()
                 with open("ticketStorage.txt", 'w+') as f2:
                     file_list = f2.readlines()
-                    file_list.remove(new_ticket+'\n')
+                    file_list.remove(str(new_ticket) +'\n')
                     f2.writelines(file_list)
         os.rename(filename+".lefting", filename)
         self.ticketList.remove(new_ticket)
