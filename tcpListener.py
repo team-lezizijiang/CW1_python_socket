@@ -59,11 +59,11 @@ class TcpListener:
                 if message.message_type == message.NEW_FILE:
                     new_file_list = message.message
                     for file in new_file_list.keys():
-                        for peer in self.peers:
+                        for peer in self.peers.keys():
                             conn = socket.socket()
                             conn.connect((peer, self.port,))
                             conn.send(
-                                (tcpMessage(tcpMessage.NEW_TICKET, Ticket(new_file_list[file], 4096, 0).toJson(), 0)).toJson())
+                                (tcpMessage(tcpMessage.NEW_TICKET, Ticket(new_file_list[file], 4096, 0), 0)).toJson())
 
     def listen(self):
         self.socket.listen(5)
@@ -95,8 +95,7 @@ class TcpListener:
         header = json.loads(jsonfile)  # load json file to dict
         print(header)
         if header["message_type"] == tcpMessage.NEW_TICKET:  # new ticket with new file to be sync
-            header['message'] = json.loads(header['message'])
-            header['message']['peer'] = conn.getpeername()[0]
+            header['message']['peer'] = conn.getperrnamne()[0]
             self.ticketQueue.put(message(message_type=message.NEW_TICKET, message=header['message']))
         elif header["message_type"] == tcpMessage.WAKE:  # peers update the fileList
             self.peers[str(conn.getpeername()[0])] = header['message']
