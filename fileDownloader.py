@@ -3,6 +3,7 @@ import os
 import socket
 import ticket
 from time import sleep
+from SharedFile import SharedFile
 from message import message
 from tcpMessage import tcpMessage
 
@@ -72,6 +73,7 @@ class FileDownloader:
                     f2.writelines(file_list)
         os.rename(filename+".lefting", filename)
         self.ticketList.remove(new_ticket)
+        self.existFileList[filename] = SharedFile(filename, os.path.getmtime(filename), os.path.getsize(filename))
         conn.send(tcpMessage(tcpMessage.SUCCESS_ACCEPT, filename, 0).toJson())
         conn.close()
 

@@ -99,7 +99,9 @@ class TcpListener:
             header['message']['peer'] = conn.getpeername()[0]
             self.ticketQueue.put(message(message_type=message.NEW_TICKET, message=header['message']))
         elif header["message_type"] == tcpMessage.WAKE:  # peers update the fileList
-            self.peers[str(conn.getpeername()[0])] = header['message']
+            if self.peers[str(conn.getpeername()[0])] != header['message']:
+                self.hello(self.peers)
+                self.peers[str(conn.getpeername()[0])] = header['message']
         elif header["message_type"] == tcpMessage.DOWNLOAD:  # accept request and send block back
             self.sendFile(header["message"], conn.getpeername()[0])
         elif header["message_type"] == tcpMessage.BLOCK_MESSAGE:  # accept the block data and send it to downloader
