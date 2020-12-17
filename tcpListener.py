@@ -74,16 +74,12 @@ class TcpListener:
             handleThread = Thread(target=self.handle, args=(conn,))
             handleThread.start()
 
-    def sendFile(self, ticket, peer):
+    def sendFile(self, filename, peer, i):
         conn = socket.socket()
         conn.connect((peer, self.port), )
-        for i in range(0, len(ticket['blockStateList'])):
-            if ticket['blockStateList'][i] == 0:
-                with open(ticket['filename'], 'br') as fp:
-                    fp.seek(i * ticket['blockSize'])
-                    conn.send(tcpMessage(tcpMessage.BLOCK_MESSAGE, fp.read(
-                        ticket['blockSize'] if i != (len(ticket['blockStateList']) - 1) else ticket['lastBlockSize'],
-                        ), i).toJson())
+        with open(filename, 'br') as fp:
+            fp.seek(i * 4096)
+            conn.send(tcpMessage(tcpMessage.BLOCK_MESSAGE, 4096, i).toJson())
         conn.close()
 
     def handle(self, conn):
@@ -103,7 +99,7 @@ class TcpListener:
                 self.hello(self.peers)
                 self.peers[str(conn.getpeername()[0])] = header['message']
         elif header["message_type"] == tcpMessage.DOWNLOAD:  # accept request and send block back
-            self.sendFile(header["message"], conn.getpeername()[0])
+            self.sendFile(header["message"], conn.getpeername()[0], header['index'])
         elif header["message_type"] == tcpMessage.BLOCK_MESSAGE:  # accept the block data and send it to downloader
             self.blockQueue.put(message(message_type=message.FILE_BLOCK, message=(header["message"], header["index"])))
         elif header["message_type"] == tcpMessage.SUCCESS_ACCEPT:  # peer received file, send back md5 to check it
