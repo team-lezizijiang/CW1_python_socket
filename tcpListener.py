@@ -64,6 +64,7 @@ class TcpListener:
                             conn.connect((peer, self.port,))
                             conn.send(
                                 (tcpMessage(tcpMessage.NEW_TICKET, Ticket(new_file_list[file], 4096, 0).__dict__(), 0)).toJson())
+                            conn.close()
 
     def listen(self):
         self.socket.listen(5)

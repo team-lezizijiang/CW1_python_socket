@@ -25,7 +25,7 @@ if __name__ == '__main__':
     fileQueue = mp.Manager().Queue()
     blockQueue = mp.Manager().Queue()
     file_scanner = FileScanner.FileScanner(filelist, fileQueue, os.path.normpath("template"))
-    file_downloader = fileDownloader.FileDownloader(ticketQueue, blockQueue, filelist, peers, 24685)
+    file_downloader = fileDownloader.FileDownloader(ticketQueue, blockQueue, filelist, peers, 24475)
     tcp_listener = tcpListener.TcpListener("127.0.0.1", 24475, peers, fileQueue, ticketQueue, blockQueue, filelist)
     while True:
         time.sleep(1)
