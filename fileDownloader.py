@@ -47,7 +47,7 @@ class FileDownloader:
         if os.path.isfile(filename):
             os.remove(filename)
         os.mknod(filename+".lefting")
-        if new_ticket['blockNumber'] != 0:
+        if new_ticket.blockNumber != 0:
             with open(filename + ".lefting", "ab+") as f:
                 i = new_ticket.find_first_untraverse_block()
                 while i != -1:
