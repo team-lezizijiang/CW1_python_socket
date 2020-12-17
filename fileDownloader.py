@@ -29,7 +29,7 @@ class FileDownloader:
             if self.ticketQueue.qsize() == 0:
                 continue
             temp_message = self.ticketQueue.get()
-            new_ticket = ticket.Ticket(temp_message.message['sharedFile'], temp_message.message['size'], temp_message.message['peer'])
+            new_ticket = ticket.Ticket(temp_message.message['sharedFile'], temp_message.message['blockSize'], temp_message.message['peer'])
             print('new new_ticket received')
             if new_ticket.sharedFile['filename'] not in self.existFileList.keys():
                 self.download_file(new_ticket)
