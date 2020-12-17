@@ -35,11 +35,11 @@ class FileDownloader:
             print('new new_ticket received')
             if new_ticket.sharedFile['filename'] not in self.existFileList.keys():
                 self.download_file(new_ticket)
-                self.ticketList.append(new_ticket.sharedFile["filename"])
+                self.ticketList.append(new_ticket)
                 if not os.path.isfile("ticketStorage.txt"):
                     os.mknod('ticketStorage.txt')
                 with open("ticketStorage.txt", 'a+') as f:
-                    f.write(new_ticket.sharedFile["filename"] + '\n')
+                    f.write(str(new_ticket) + '\n')
             sleep(1)
 
     def download_file(self, new_ticket):
