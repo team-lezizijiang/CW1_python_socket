@@ -10,7 +10,6 @@ def serverThre(server):
     server.listen()
     server.handleCon()
 
-
 def clientThre(client):
     client.connectServer()
 

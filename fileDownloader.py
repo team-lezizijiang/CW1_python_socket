@@ -29,7 +29,7 @@ class FileDownloader:
                 continue
             temp_message = self.ticketQueue.get()
             new_ticket = temp_message.message
-            if new_ticket["sharedFile"].filename not in self.existFileList.keys():
+            if new_ticket["sharedFile"]['filename'] not in self.existFileList.keys():
                 self.download_file(new_ticket)
                 self.ticketList.append(new_ticket["sharedFile"]["filename"])
                 if not os.path.isfile("ticketStorage.txt"):
