@@ -23,17 +23,17 @@ class Ticket:
         self.blockStateList[index] = 1  # 1表示传输成功
 
     def find_first_untraverse_block(self):
-        for i in range(len(self.blockStateList)):
-            if self.blockStateList[i] == 0:
-                return i
-        return -1
+        try:
+            return self.blockStateList.index(0)
+        except ValueError:
+            return -1
 
     def __eq__(self, other):
         return self.sharedFile.mtime == other.sharedFile.mtime and self.sharedFile.size == other.sharedFile.size
 
     def __dict__(self):
         return {
-            "sharedFile": self.sharedFile,
+            "sharedFile": self.sharedFile.__dict__,
             "blockSize": self.blockSize,
             "blockNumber": self.blockNumber,
             "lastBlockSize": self.lastBlockSize,
