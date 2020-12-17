@@ -18,7 +18,7 @@ class tcpMessage:
     def toJson(self):
         jsons = json.dumps({'message_type': self.message_type,
                             'index': self.index,
-                            'message': self.message.__dict__ if self.message_type == 3 else self.message
+                            'message': self.message.__dict__ if self.message_type in (2, 3) else self.message
         })
         return struct.pack("I", len(jsons)) + jsons.encode("utf-8")
 
