@@ -47,7 +47,7 @@ class FileDownloader:
         filename = os.path.sep.join(new_ticket.sharedFile["filename"].split('\\'))
         if os.path.isfile(filename):
             os.remove(filename)
-        if not os.path.exists(filename):
+        if not os.path.exists(filename+".lefting"):
             os.mknod(filename+".lefting")
         if new_ticket.blockNumber != 0:
             with open(filename + ".lefting", "ab+") as f:
