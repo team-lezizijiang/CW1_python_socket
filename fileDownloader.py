@@ -29,6 +29,7 @@ class FileDownloader:
                 continue
             temp_message = self.ticketQueue.get()
             new_ticket = temp_message.message
+            print('new ticket received')
             if new_ticket["sharedFile"]['filename'] not in self.existFileList.keys():
                 self.download_file(new_ticket)
                 self.ticketList.append(new_ticket["sharedFile"]["filename"])
@@ -69,4 +70,5 @@ class FileDownloader:
                     f2.writelines(file_list)
         os.rename(filename+".lefting", filename)
         conn.send(tcpMessage(tcpMessage.SUCCESS_ACCEPT, filename, 0).toJson())
+        conn.close()
 
