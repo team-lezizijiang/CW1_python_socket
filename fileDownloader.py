@@ -46,7 +46,8 @@ class FileDownloader:
         filename = os.path.sep.join(new_ticket.sharedFile["filename"].split('\\'))
         if os.path.isfile(filename):
             os.remove(filename)
-        os.mknod(filename+".lefting")
+        if not os.path.exists(filename):
+            os.mknod(filename+".lefting")
         if new_ticket.blockNumber != 0:
             with open(filename + ".lefting", "ab+") as f:
                 i = new_ticket.find_first_untraverse_block()
@@ -70,6 +71,7 @@ class FileDownloader:
                     file_list.remove(filename+'\n')
                     f2.writelines(file_list)
         os.rename(filename+".lefting", filename)
+        self.ticketList.remove(new_ticket)
         conn.send(tcpMessage(tcpMessage.SUCCESS_ACCEPT, filename, 0).toJson())
         conn.close()
 
