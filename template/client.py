@@ -48,7 +48,7 @@ class Client:
                 requestFileInfromationThred = threading.Thread(target=self.requestFileInformation, args=(file,))
                 requestFileInfromationThred.start()
             elif isfile(file) == False: # if the file not exit in own sharefolder
-                # direct request to download the whole file
+                # direct request to download the whe file
                 #break
                 requestFileDownloadThred = threading.Thread(target=self.requestFileDownload,args=(file,))
                 requestFileDownloadThred.start()

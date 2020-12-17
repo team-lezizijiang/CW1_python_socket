@@ -25,7 +25,7 @@ class FileDownloader:
 
     def update(self):
         while True:
-            if self.ticketQueue.empty():
+            if self.ticketQueue.qsize() == 0:
                 continue
             temp_message = self.ticketQueue.get()
             new_ticket = temp_message.message
