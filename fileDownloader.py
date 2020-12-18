@@ -45,7 +45,7 @@ class FileDownloader:
             if self.ticketQueue.qsize() == 0:
                 continue
             temp_message = self.ticketQueue.get()
-            temp_message.message['sharedFile']["filename"] = os.path.sep.join(temp_message.message['sharedFile']["filename"].split('\\'))
+            temp_message.message['sharedFile']["filename"] = os.path.sep.join(temp_message.message['sharedFile']["filename"].split('/'))
             new_ticket = Ticket(temp_message.message['sharedFile'], temp_message.message['blockSize'],
                                        temp_message.message['peer'])
             print('new new_ticket received')
