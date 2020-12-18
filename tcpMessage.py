@@ -1,6 +1,8 @@
 import struct
 import json
 import base64
+
+
 class tcpMessage:
     message_type = 0
     index = 0
@@ -20,9 +22,11 @@ class tcpMessage:
         jsons = json.dumps({"message_type": self.message_type,
                             "index": self.index,
                             "message": self.message
-        }, default=lambda x: base64.b64encode(x).decode('utf-8') if isinstance(x, (bytes, bytearray)) else x.__dict__)
+                            }, default=lambda x: base64.b64encode(x).decode('utf-8') if isinstance(x, (
+        bytes, bytearray)) else x.__dict__, indent=4)
         # File Bytes to Base64 Bytes then to String
         return struct.pack("I", len(jsons)) + jsons.encode('utf-8')
+
 
 if __name__ == "__main__":
     print(tcpMessage(0, {}, 0).toJson())
