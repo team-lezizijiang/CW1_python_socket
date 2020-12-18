@@ -22,7 +22,7 @@ class tcpMessage:
                             'message': self.message
         }, default=lambda x: base64.b64encode(x).decode('utf-8') if isinstance(x, (bytes, bytearray)) else x.__dict__)
         # File Bytes to Base64 Bytes then to String
-        return struct.pack("I", len(jsons)) + jsons.encode("utf-8")
+        return struct.pack("I", len(jsons)) + jsons.encode()
 
 if __name__ == "__main__":
     print(tcpMessage(0, {}, 0).toJson())

@@ -93,7 +93,7 @@ class TcpListener:
         headerlength = struct.unpack("I", headerlength)
         print(f"[SERVER] received a header with length [{headerlength}]")
         jsonfile = conn.recv(headerlength[0])
-        header = json.load(jsonfile)  # load json file to dict
+        header = json.loads(jsonfile)  # load json file to dict
         print(header)
         if header["message_type"] == tcpMessage.NEW_TICKET:  # new new_ticket with new file to be sync
             header['message']['peer'] = conn.getpeername()[0]
