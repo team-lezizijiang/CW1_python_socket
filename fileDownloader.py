@@ -76,7 +76,7 @@ class FileDownloader:
                             continue
                         file_message = self.blockQueue.get()
                         print('start downloading ' + filename + 'block ' + str(i))
-                        file_block = base64.b64decode(file_message.message[0])
+                        file_block = file_message.message[0]
                         index = file_message.message[1]
                         f.seek(index * new_ticket.blockSize)
                         f.write(file_block)
