@@ -88,6 +88,8 @@ class FileDownloader:
         os.rename(filename + ".lefting", filename)
         self.ticketList.remove(new_ticket)
         self.existFileList[filename] = SharedFile(filename, os.path.getmtime(filename), os.path.getsize(filename))
+        conn = socket.socket()
+        conn.connect((new_ticket.peer, self.port), )
         conn.send(tcpMessage(tcpMessage.SUCCESS_ACCEPT, new_ticket.toJson(), 0).toJson())
         print('start complete ' + filename)
         with open("ticketStorage.txt", 'w') as f:
