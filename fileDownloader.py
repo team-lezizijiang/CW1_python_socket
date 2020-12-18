@@ -57,7 +57,6 @@ class FileDownloader:
             sleep(1)
 
     def download_file(self, new_ticket):
-        conn = socket.socket()
         filename = new_ticket.sharedFile['filename']
         if os.path.isfile(filename):
             os.remove(filename)
@@ -68,6 +67,7 @@ class FileDownloader:
             with open(filename + ".lefting", "ab+") as f:
                 i = new_ticket.find_first_untraverse_block()
                 while i != -1:
+                    conn = socket.socket()
                     conn.connect((new_ticket.peer, self.port), )
                     conn.send((tcpMessage(tcpMessage.DOWNLOAD, filename, i).toJson()))
                     flag = 0
