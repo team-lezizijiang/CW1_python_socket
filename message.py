@@ -4,6 +4,7 @@ class message:
     NEW_FILE = 1
     NEW_TICKET = 2
     FILE_BLOCK = 3
+    MD5 = 4
 
     def __init__(self, message_type, message):
         """

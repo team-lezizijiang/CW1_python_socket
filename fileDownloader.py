@@ -1,8 +1,9 @@
+import hashlib
 import threading
 import os
 import socket
 import base64
-import ticket
+from ticket import Ticket
 from time import sleep
 from SharedFile import SharedFile
 from message import message
@@ -11,17 +12,30 @@ from tcpMessage import tcpMessage
 
 class FileDownloader:
 
-    def __init__(self, ticketQueue, blockQueue, fileList, peers, port):
+    def __init__(self, ticketQueue, blockQueue, messageQueue, fileList, peers, port):
         self.ticketQueue = ticketQueue
         self.peers = peers
         self.existFileList = fileList
         self.ticketList = list()
         self.port = port
+        self.downloadTicketState = dict()
         self.blockQueue = blockQueue
-        with open("ticketStorage.txt", 'a+') as f:
-            oldTicketList = f.readlines()
-        oldTicketList = [i[:-2] for i in oldTicketList]
-        self.ticketList.extend(oldTicketList)
+        self.messageQueue = messageQueue
+        if os.path.exists("ticketStorage.txt") and os.path.getsize("ticketStorage.txt") != 0:
+            with open("ticketStorage.txt", 'r') as f:
+                oldTicketList = f.readlines()
+            for i in oldTicketList:
+                try:
+                    string = i.rstrip('\n')
+                    lst1 = string.split()
+                    blockStateInfoList = eval(lst1[3])
+                    new_ticket = Ticket(SharedFile(lst1[0], eval(lst1[1]), eval(lst1[2])).__dict__, 4096, lst1[4])
+                    new_ticket.blockStateList = blockStateInfoList
+                    self.ticketList.append(new_ticket)
+                except:
+                    pass
+        elif not os.path.exists("ticketStorage.txt"):
+            open("ticketStorage.txt", 'w').close()
         self.file_process = threading.Thread(target=self.update)
         self.file_process.setDaemon(True)
         self.file_process.start()
@@ -31,16 +45,15 @@ class FileDownloader:
             if self.ticketQueue.qsize() == 0:
                 continue
             temp_message = self.ticketQueue.get()
-            temp_message.message['sharedFile']["filename"] = os.path.sep.join(temp_message.message['sharedFile']["filename"].split('\\'))
-            new_ticket = ticket.Ticket(temp_message.message['sharedFile'], temp_message.message['blockSize'],
+            temp_message.message['sharedFile']["filename"] = os.path.sep.join(temp_message.message['sharedFile']["filename"].split('/'))
+            new_ticket = Ticket(temp_message.message['sharedFile'], temp_message.message['blockSize'],
                                        temp_message.message['peer'])
             print('new new_ticket received')
-            # if not os.path.isfile("ticketStorage.txt"):
-            #     os.mknod('ticketStorage.txt')
-            # with open("ticketStorage.txt", 'a+') as f:
-            #     f.write(str(new_ticket) + '\n')
             self.ticketList.append(new_ticket)
-            self.download_file(new_ticket)
+            with open ("ticketStorage.txt", 'w') as f:
+                f.write(str(new_ticket) + '\n')
+            for i in self.ticketList:
+                self.download_file(i)
             sleep(1)
 
     def download_file(self, new_ticket):
@@ -50,7 +63,8 @@ class FileDownloader:
         if os.path.isfile(filename):
             os.remove(filename)
         if not os.path.exists(filename + ".lefting"):
-            open(filename + ".lefting", 'w')
+            file = open(filename + ".lefting", 'w')
+            file.close()
         if new_ticket.blockNumber != 0:
             with open(filename + ".lefting", "ab+") as f:
                 i = new_ticket.find_first_untraverse_block()
@@ -61,6 +75,7 @@ class FileDownloader:
                         if self.blockQueue.empty():
                             continue
                         file_message = self.blockQueue.get()
+                        print('start downloading ' + filename + 'block ' + str(index))
                         file_block = base64.b64decode(file_message.message[0])
                         index = file_message.message[1]
                         f.seek(index * new_ticket.blockSize)
@@ -69,12 +84,15 @@ class FileDownloader:
                         sleep(0.1)
                     new_ticket.update(i)
                     i = new_ticket.find_first_untraverse_block()
-                # with open("ticketStorage.txt", 'w+') as f2:
-                #     file_list = f2.readlines()
-                #     file_list.remove(str(new_ticket) + '\n')
-                #     f2.writelines(file_list)
         os.rename(filename + ".lefting", filename)
         self.ticketList.remove(new_ticket)
         self.existFileList[filename] = SharedFile(filename, os.path.getmtime(filename), os.path.getsize(filename))
-        conn.send(tcpMessage(tcpMessage.SUCCESS_ACCEPT, filename, 0).toJson())
+        conn.send(tcpMessage(tcpMessage.SUCCESS_ACCEPT, new_ticket.toJson(), 0).toJson())
         conn.close()
+        print('start complete ' + filename)
+        with open("ticketStorage.txt", 'w') as f:
+            for ticket in self.ticketList:
+                f.write(str(ticket) + '\n')
+        # correct_md5 = self.messageQueue.get().message
+        # print("md5 check success and md5 is" + str(correct_md5))
+

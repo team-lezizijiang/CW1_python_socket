@@ -43,3 +43,6 @@ class Ticket:
 
     def toJson(self):
         return json.dumps(self.__dict__()).encode()
+
+    def __str__(self):
+        return str(self.sharedFile['filename'])+' '+ str(self.sharedFile['mtime']) +' ' + str(self.sharedFile['size']) + ' ' + str(self.blockStateList) + ' ' + str(self.peer) +'\n'
