@@ -63,7 +63,7 @@ class FileDownloader:
         if os.path.isfile(filename):
             os.remove(filename)
         if not os.path.exists(filename + ".lefting"):
-            file = open(filename + ".lefting", 'w')
+            file = open(filename + ".lefting", mode='w')
             file.close()
         if new_ticket.blockNumber != 0:
             with open(filename + ".lefting", "ab+") as f:

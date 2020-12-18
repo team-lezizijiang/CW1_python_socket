@@ -82,7 +82,7 @@ class TcpListener:
         conn.connect((peer, self.port), )
         with open(filename, 'br') as fp:
             fp.seek(i * 4096)
-            conn.send(tcpMessage(tcpMessage.BLOCK_MESSAGE, fp.read(max(4096, os.path.getsize(filename)) - i * 4096), i).toJson())
+            conn.send(tcpMessage(tcpMessage.BLOCK_MESSAGE, fp.read(min(4096, os.path.getsize(filename)) - i * 4096), i).toJson())
         conn.close()
         print(str(filename) + " block" + str(i) + "send to " + str(peer))
 
