@@ -58,7 +58,6 @@ class FileDownloader:
 
     def download_file(self, new_ticket):
         conn = socket.socket()
-        conn.connect((new_ticket.peer, self.port), )
         filename = new_ticket.sharedFile['filename']
         if os.path.isfile(filename):
             os.remove(filename)
@@ -69,6 +68,7 @@ class FileDownloader:
             with open(filename + ".lefting", "ab+") as f:
                 i = new_ticket.find_first_untraverse_block()
                 while i != -1:
+                    conn.connect((new_ticket.peer, self.port), )
                     conn.send((tcpMessage(tcpMessage.DOWNLOAD, filename, i).toJson()))
                     flag = 0
                     while flag != 1:
@@ -84,11 +84,11 @@ class FileDownloader:
                         sleep(0.1)
                     new_ticket.update(i)
                     i = new_ticket.find_first_untraverse_block()
+                    conn.close()
         os.rename(filename + ".lefting", filename)
         self.ticketList.remove(new_ticket)
         self.existFileList[filename] = SharedFile(filename, os.path.getmtime(filename), os.path.getsize(filename))
         conn.send(tcpMessage(tcpMessage.SUCCESS_ACCEPT, new_ticket.toJson(), 0).toJson())
-        conn.close()
         print('start complete ' + filename)
         with open("ticketStorage.txt", 'w') as f:
             for ticket in self.ticketList:
