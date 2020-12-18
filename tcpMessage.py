@@ -22,10 +22,12 @@ class tcpMessage:
         jsons = json.dumps({"message_type": self.message_type,
                             "index": self.index,
                             "message": self.message
-                            }, default=lambda x: base64.b64encode(x) if isinstance(x, (
-        bytes, bytearray)) else x.__dict__, indent=4)
+                            }, default=lambda x: base64.b64encode(x).decode('utf-8') if isinstance(x, (
+        bytes, bytearray)) else x.__dict__, indent=4) if self.message_type != 1 else json.dumps({"message_type": self.message_type,
+                            "index": self.index
+                            }, indent=4)
         # File Bytes to Base64 Bytes then to String
-        return struct.pack("I", len(jsons.encode('utf-8'))) + jsons.encode('utf-8')
+        return struct.pack("I", len(jsons.encode('utf-8'))) + jsons.encode('utf-8') if  self.message_type != 1 else struct.pack("I", len(jsons.encode('utf-8'))) + jsons.encode('utf-8') + self.message
 
 
 if __name__ == "__main__":

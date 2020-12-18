@@ -110,6 +110,7 @@ class TcpListener:
         elif header["message_type"] == tcpMessage.DOWNLOAD:  # accept request and send block back
             self.sendFile(header["message"], conn.getpeername()[0], header['index'])
         elif header["message_type"] == tcpMessage.BLOCK_MESSAGE:  # accept the block data and send it to downloader
+            header["message"] = conn.recv(4096)
             self.blockQueue.put(message(message_type=message.FILE_BLOCK, message=(header["message"], header["index"])))
         elif header["message_type"] == tcpMessage.SUCCESS_ACCEPT:  # peer received file, send back md5 to check it
             self.sendMD5(header["message"]['filename'], conn.getpeername()[0])
