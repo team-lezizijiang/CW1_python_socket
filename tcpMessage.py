@@ -17,9 +17,9 @@ class tcpMessage:
         self.message = message
 
     def toJson(self):
-        jsons = json.dumps({'message_type': self.message_type,
-                            'index': self.index,
-                            'message': self.message
+        jsons = json.dumps({"message_type": self.message_type,
+                            "index": self.index,
+                            "message": self.message
         }, default=lambda x: base64.b64encode(x).decode('utf-8') if isinstance(x, (bytes, bytearray)) else x.__dict__)
         # File Bytes to Base64 Bytes then to String
         return struct.pack("I", len(jsons)) + jsons.encode('utf-8')
