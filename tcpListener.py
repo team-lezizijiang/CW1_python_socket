@@ -65,7 +65,7 @@ class TcpListener:
                             conn = socket.socket()
                             conn.connect((peer, self.port,))
                             conn.send(
-                                (tcpMessage(tcpMessage.NEW_TICKET, Ticket(new_file_list[file].__dict__, 409600, peer).__dict__(), 0)).toJson())
+                                (tcpMessage(tcpMessage.NEW_TICKET, Ticket(new_file_list[file].__dict__, 4096, peer).__dict__(), 0)).toJson())
                             conn.close()
                             print('new ticket send to' + str(peer))
             self.hello(self.peers)
@@ -83,8 +83,8 @@ class TcpListener:
         conn.connect((peer, self.port), )
         filename = os.path.sep.join(filename.split("\\"))
         with open(filename, 'br') as fp:
-            fp.seek(i * 409600)
-            conn.send(tcpMessage(tcpMessage.BLOCK_MESSAGE, fp.read(min(409600, os.path.getsize(filename) - i * 409600)), i).toJson())
+            fp.seek(i * 4096)
+            conn.send(tcpMessage(tcpMessage.BLOCK_MESSAGE, fp.read(min(4096, os.path.getsize(filename) - i * 4096)), i).toJson())
         conn.close()
         print(str(filename) + " block" + str(i) + "send to " + str(peer))
 
@@ -107,12 +107,12 @@ class TcpListener:
                 for i in header["message"].keys():
                     if os.path.sep.join(i.split("\\")) not in self.filelist.keys():
                         self.ticketQueue.put(message(message_type=message.NEW_TICKET, message=Ticket(
-                            SharedFile(i, header['message'][i]['mtime'], header['message'][i]['size']).__dict__, 409600, conn.getpeername()[0]).__dict__()))
+                            SharedFile(i, header['message'][i]['mtime'], header['message'][i]['size']).__dict__, 4096, conn.getpeername()[0]).__dict__()))
 
         elif header["message_type"] == tcpMessage.DOWNLOAD:  # accept request and send block back
             self.sendFile(header["message"], conn.getpeername()[0], header['index'])
         elif header["message_type"] == tcpMessage.BLOCK_MESSAGE:  # accept the block data and send it to downloader
-            header["message"] = conn.recv(409600)
+            header["message"] = conn.recv(4096)
             self.blockQueue.put(message(message_type=message.FILE_BLOCK, message=(header["message"], header["index"])))
         elif header["message_type"] == tcpMessage.SUCCESS_ACCEPT:  # peer received file, send back md5 to check it
                 pass # self.sendMD5(header["message"]['filename'], conn.getpeername()[0])
