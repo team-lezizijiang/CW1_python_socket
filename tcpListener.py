@@ -96,7 +96,7 @@ class TcpListener:
         print(f"[SERVER] received a header with length [{headerlength}]")
         jsonfile = conn.recv(headerlength[0])
         header = json.loads(jsonfile.decode('utf-8'))  # load json file to dict
-        print(header)
+        # print(header)
         if header["message_type"] == tcpMessage.NEW_TICKET:  # new new_ticket with new file to be sync
             header['message']['peer'] = conn.getpeername()[0]
             self.ticketQueue.put(message(message_type=message.NEW_TICKET, message=header['message']))

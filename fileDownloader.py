@@ -6,7 +6,6 @@ import base64
 from ticket import Ticket
 from time import sleep
 from SharedFile import SharedFile
-from message import message
 from tcpMessage import tcpMessage
 
 
@@ -61,7 +60,9 @@ class FileDownloader:
         if os.path.isfile(filename):
             os.remove(filename)
         if not os.path.exists(filename + ".lefting"):
-            file = open(filename + ".lefting", mode='w')
+            with open(filename + ".lefting", mode='wb') as file:
+                for i in range(new_ticket.sharedFile['size']):
+                    file.write(b'0')
             file.close()
         if new_ticket.blockNumber != 0:
             with open(filename + ".lefting", "ab+") as f:
@@ -75,21 +76,20 @@ class FileDownloader:
                         if self.blockQueue.empty():
                             continue
                         file_message = self.blockQueue.get()
-                        print('start downloading ' + filename + 'block ' + str(i))
+                        # print('start downloading ' + filename + 'block ' + str(i))
                         file_block = file_message.message[0]
                         index = file_message.message[1]
                         f.seek(index * new_ticket.blockSize)
                         f.write(file_block)
                         flag = 1
-                        sleep(0.001)
                     new_ticket.update(i)
                     i = new_ticket.find_first_untraverse_block()
                     conn.close()
         os.rename(filename + ".lefting", filename)
         self.ticketList.remove(new_ticket)
         self.existFileList[filename] = SharedFile(filename, os.path.getmtime(filename), os.path.getsize(filename))
-        conn = socket.socket()
-        conn.connect((new_ticket.peer, self.port), )
+        # conn = socket.socket()
+        # conn.connect((new_ticket.peer, self.port), )
         # conn.send(tcpMessage(tcpMessage.SUCCESS_ACCEPT, new_ticket.toJson(), 0).toJson())
         print('start complete ' + filename)
         with open("ticketStorage.txt", 'w') as f:
