@@ -81,7 +81,8 @@ class TcpListener:
     def sendFile(self, filename, peer, i):
         conn = socket.socket()
         conn.connect((peer, self.port), )
-        with open(os.path.sep.join(filename.split("\\")), 'br') as fp:
+        filename = os.path.sep.join(filename.split("\\"))
+        with open(filename, 'br') as fp:
             fp.seek(i * 409600)
             conn.send(tcpMessage(tcpMessage.BLOCK_MESSAGE, fp.read(min(409600, os.path.getsize(filename) - i * 409600)), i).toJson())
         conn.close()
