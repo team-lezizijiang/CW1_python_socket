@@ -81,7 +81,7 @@ class TcpListener:
     def sendFile(self, filename, peer, i):
         conn = socket.socket()
         conn.connect((peer, self.port), )
-        with open(filename, 'br') as fp:
+        with open(s.path.sep.join(filename.split("\\")), 'br') as fp:
             fp.seek(i * 409600)
             conn.send(tcpMessage(tcpMessage.BLOCK_MESSAGE, fp.read(min(409600, os.path.getsize(filename) - i * 409600)), i).toJson())
         conn.close()
@@ -104,7 +104,7 @@ class TcpListener:
                 self.hello(self.peers)
                 self.peers[str(conn.getpeername()[0])] = header['message']
                 for i in header["message"].keys():
-                    if os.path.sep.join(i.splite("\\")) not in self.filelist.keys():
+                    if os.path.sep.join(i.split("\\")) not in self.filelist.keys():
                         self.ticketQueue.put(message(message_type=message.NEW_TICKET, message=Ticket(
                             SharedFile(i, header['message'][i]['mtime'], header['message'][i]['size']).__dict__, 409600, conn.getpeername()[0]).__dict__()))
 
