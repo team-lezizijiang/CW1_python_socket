@@ -68,6 +68,7 @@ class TcpListener:
                                 (tcpMessage(tcpMessage.NEW_TICKET, Ticket(new_file_list[file].__dict__, 409600, peer).__dict__(), 0)).toJson())
                             conn.close()
                             print('new ticket send to' + str(peer))
+            self.hello(self.peers)
 
     def listen(self):
         self.socket.listen(5)
@@ -103,7 +104,7 @@ class TcpListener:
                 self.hello(self.peers)
                 self.peers[str(conn.getpeername()[0])] = header['message']
                 for i in header["message"].keys():
-                    if i not in self.filelist.keys():
+                    if os.path.sep.join(i.splite("\\")) not in self.filelist.keys():
                         self.ticketQueue.put(message(message_type=message.NEW_TICKET, message=Ticket(
                             SharedFile(i, header['message'][i]['mtime'], header['message'][i]['size']).__dict__, 409600, conn.getpeername()[0]).__dict__()))
 
@@ -113,7 +114,7 @@ class TcpListener:
             header["message"] = conn.recv(409600)
             self.blockQueue.put(message(message_type=message.FILE_BLOCK, message=(header["message"], header["index"])))
         elif header["message_type"] == tcpMessage.SUCCESS_ACCEPT:  # peer received file, send back md5 to check it
-            self.sendMD5(header["message"]['filename'], conn.getpeername()[0])
+                pass # self.sendMD5(header["message"]['filename'], conn.getpeername()[0])
         elif header["message_type"] == tcpMessage.MD5:
             self.messageQueue.put(message(message_type=message.MD5, message=header['message']))
         conn.close()
@@ -123,7 +124,7 @@ class TcpListener:
         conn.connect((peer, self.port,))
         hash_md5 = hashlib.md5()
         with open(filename, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):
+            for chunk in iter(lambda: f.read(409600), b""):
                 hash_md5.update(chunk)
         conn.send(tcpMessage(tcpMessage.MD5, hash_md5, 0).toJson())
         conn.close()

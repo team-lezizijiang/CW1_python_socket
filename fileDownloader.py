@@ -81,7 +81,7 @@ class FileDownloader:
                         f.seek(index * new_ticket.blockSize)
                         f.write(file_block)
                         flag = 1
-                        sleep(0.1)
+                        sleep(0.001)
                     new_ticket.update(i)
                     i = new_ticket.find_first_untraverse_block()
                     conn.close()
@@ -90,7 +90,7 @@ class FileDownloader:
         self.existFileList[filename] = SharedFile(filename, os.path.getmtime(filename), os.path.getsize(filename))
         conn = socket.socket()
         conn.connect((new_ticket.peer, self.port), )
-        conn.send(tcpMessage(tcpMessage.SUCCESS_ACCEPT, new_ticket.toJson(), 0).toJson())
+        # conn.send(tcpMessage(tcpMessage.SUCCESS_ACCEPT, new_ticket.toJson(), 0).toJson())
         print('start complete ' + filename)
         with open("ticketStorage.txt", 'w') as f:
             for ticket in self.ticketList:
